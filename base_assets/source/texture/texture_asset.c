@@ -10,7 +10,7 @@
  */
 #include <assert.h>
 #include <string.h>
-#include <base_assets/texture/texture_asset_asset.h>
+#include <base_assets/texture/texture_asset.h>
 #include <library/allocator/allocator.h>
 #include <library/core/core.h>
 #include <library/type_registry/type_registry.h>
