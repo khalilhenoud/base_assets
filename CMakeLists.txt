@@ -39,4 +39,4 @@ if (NOT HAS_STANDALONE_PREDECESSOR)
   add_subdirectory(external/library library)
 endif()
 
-add_subdirectory(entity)
+add_subdirectory(base_assets)
