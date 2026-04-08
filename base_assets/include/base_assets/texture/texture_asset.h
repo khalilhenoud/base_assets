@@ -1,5 +1,5 @@
 /**
- * @file texture.h
+ * @file texture_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
@@ -16,12 +16,12 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <entity/internal/module.h>
+#include <base_assets/internal/module.h>
 #include <library/string/cstring.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_t, '*' = texture
+//| texture_asset_t, '*' = texture
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -40,63 +40,68 @@ extern "C" {
 //|    *_owns_alloc             | YES
 //|    *_get_alloc              | YES
 //|    *_cleanup                | YES
-////////////////////////////////////////////////////////////////////////////////
-// NOTE:
-//  - should texture_t own its allocator?
+//|    *_get_dir                | YES
+//|    *_get_loader             | YES
+//|    *_get_deloader           | YES
+//|    *_type_asset_count       | YES
+//|    *_type_get_assets        | YES
+//|    *_is_asset_type          | YES
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
+// TODO: replace with the content of texture_runtime_t
 typedef
-struct texture_t {
+struct texture_asset_t {
   cstring_t path;
-} texture_t;
+} texture_asset_t;
 
-ENTITY_API
+BASE_ASSETS_API
 void
-texture_def(void *ptr);
+texture_asset_def(void *ptr);
 
-ENTITY_API
+BASE_ASSETS_API
 uint32_t
-texture_is_def(const void *ptr);
+texture_asset_is_def(const void *ptr);
 
-ENTITY_API
+BASE_ASSETS_API
 void
-texture_serialize(
+texture_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
-ENTITY_API
+BASE_ASSETS_API
 void
-texture_deserialize(
+texture_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
-ENTITY_API
+BASE_ASSETS_API
 size_t
-texture_type_size(void);
+texture_asset_type_size(void);
 
-ENTITY_API
+BASE_ASSETS_API
 uint32_t
-texture_owns_alloc(void);
+texture_asset_owns_alloc(void);
 
-ENTITY_API
+BASE_ASSETS_API
 const allocator_t *
-texture_get_alloc(const void *ptr);
+texture_asset_get_alloc(const void *ptr);
 
-ENTITY_API
+BASE_ASSETS_API
 void
-texture_cleanup(
+texture_asset_cleanup(
   void *ptr,
-  const allocator_t* allocator);
+  const allocator_t *allocator);
 
 ////////////////////////////////////////////////////////////////////////////////
-ENTITY_API
+// TODO: REMOVE
+BASE_ASSETS_API
 void
-texture_setup(
-  texture_t *texture,
+texture_asset_setup(
+  texture_asset_t *texture,
   const char *path,
   const allocator_t* allocator);
 
