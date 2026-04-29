@@ -1,15 +1,15 @@
 /**
- * @file texture_asset.h
+ * @file font_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2023-09-04
+ * @date 2026-04-26
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2026
  *
  */
-#ifndef TEXTURE_ASSET_H
-#define TEXTURE_ASSET_H
+#ifndef FONT_ASSET_H
+#define FONT_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,12 +17,14 @@ extern "C" {
 
 #include <stdint.h>
 #include <base_assets/internal/module.h>
+#include <base_assets/texture/texture_asset.h>
 #include <library/asset/types.h>
-#include <library/containers/cvector.h>
+
+#define FONT_ASSET_MAX_GLYPH_COUNT 256
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_asset_t, '*' = texture_asset
+//| font_asset_t, '*' = font_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -51,90 +53,90 @@ extern "C" {
 
 typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
+typedef float glyph_bounds_t[6];
 
 typedef
-enum texture_format_t {
-  TEXTURE_FORMAT_RGBA,
-  TEXTURE_FORMAT_BGRA,
-  TEXTURE_FORMAT_RGB,
-  TEXTURE_FORMAT_BGR,
-  TEXTURE_FORMAT_LA,             // luminance/alpha
-  TEXTURE_FORMAT_L,
-  TEXTURE_FORMAT_A,
-  TEXTURE_FORMAT_COUNT
-} texture_format_t;
-
-// TODO: replace with the content of texture_runtime_t
-typedef
-struct texture_asset_t {
+struct glyph_data_t {
+  uint32_t x, y;
   uint32_t width;
-  uint32_t height;
-  texture_format_t format;
-  cvector_t buffer;
-} texture_asset_t;
+  uint32_t width_offset;
+} glyph_data_t;
+
+// NOTE: we are embedding the texture asset for simplicity.
+typedef
+struct font_asset_t {
+  texture_asset_t texture;
+  uint32_t texture_width, texture_height;
+  uint32_t cell_width, cell_height;
+  uint32_t font_width, font_height;
+  uint32_t start_char;
+
+  glyph_data_t glyphs[FONT_ASSET_MAX_GLYPH_COUNT];
+  glyph_bounds_t bounds[FONT_ASSET_MAX_GLYPH_COUNT];
+} font_asset_t;
 
 BASE_ASSETS_API
 void
-texture_asset_def(void *ptr);
+font_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_def(const void *ptr);
+font_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_serialize(
+font_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-texture_asset_deserialize(
+font_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-texture_asset_type_size(void);
+font_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_owns_alloc(void);
+font_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-texture_asset_get_alloc(const void *ptr);
+font_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_cleanup(
+font_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-texture_asset_get_dir(void);
+font_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-texture_asset_get_loader(void);
+font_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-texture_asset_get_deloader(void);
+font_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_type_asset_count(const void *src);
+font_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-texture_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+font_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_asset_type(void);
+font_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }

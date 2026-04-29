@@ -5,8 +5,13 @@ project(base_assets VERSION 1.0)
 
 # add the executable
 add_library(${PROJECT_NAME} SHARED
-        ./source/texture/texture_asset.c
         ./include/base_assets/internal/module.h
+        ./source/animation/animation_asset.c
+        ./source/font/font_asset.c
+        ./source/material/material_asset.c
+        ./source/mesh/mesh_asset.c
+        ./source/skinned_mesh/skinned_mesh_asset.c
+        ./source/texture/texture_asset.c
         )
 
 target_link_libraries(${PROJECT_NAME}

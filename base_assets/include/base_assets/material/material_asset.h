@@ -1,15 +1,15 @@
 /**
- * @file texture_asset.h
+ * @file material_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2023-09-04
+ * @date 2026-04-21
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2026
  *
  */
-#ifndef TEXTURE_ASSET_H
-#define TEXTURE_ASSET_H
+#ifndef MATERIAL_ASSET_H
+#define MATERIAL_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,12 +17,14 @@ extern "C" {
 
 #include <stdint.h>
 #include <base_assets/internal/module.h>
+#include <library/asset/asset_ref.h>
 #include <library/asset/types.h>
 #include <library/containers/cvector.h>
+#include <library/string/cstring.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_asset_t, '*' = texture_asset
+//| material_asset_t, '*' = material_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -53,88 +55,91 @@ typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
 typedef
-enum texture_format_t {
-  TEXTURE_FORMAT_RGBA,
-  TEXTURE_FORMAT_BGRA,
-  TEXTURE_FORMAT_RGB,
-  TEXTURE_FORMAT_BGR,
-  TEXTURE_FORMAT_LA,             // luminance/alpha
-  TEXTURE_FORMAT_L,
-  TEXTURE_FORMAT_A,
-  TEXTURE_FORMAT_COUNT
-} texture_format_t;
+struct texture_asset_properties_t {
+  asset_ref_t texture_ref;
+  float u, v;
+  float u_scale, v_scale;
+  float angle;
+} texture_asset_properties_t;
 
-// TODO: replace with the content of texture_runtime_t
 typedef
-struct texture_asset_t {
-  uint32_t width;
-  uint32_t height;
-  texture_format_t format;
-  cvector_t buffer;
-} texture_asset_t;
+struct mat_rgba_t {
+  float data[4];
+} mat_rgba_t;
+
+typedef
+struct material_asset_t {
+  cstring_t name;
+  mat_rgba_t ambient;
+  mat_rgba_t diffuse;
+  mat_rgba_t specular;
+  float shininess;
+  float opacity;
+  cvector_t textures;
+} material_asset_t;
 
 BASE_ASSETS_API
 void
-texture_asset_def(void *ptr);
+material_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_def(const void *ptr);
+material_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_serialize(
+material_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-texture_asset_deserialize(
+material_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-texture_asset_type_size(void);
+material_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_owns_alloc(void);
+material_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-texture_asset_get_alloc(const void *ptr);
+material_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_cleanup(
+material_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-texture_asset_get_dir(void);
+material_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-texture_asset_get_loader(void);
+material_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-texture_asset_get_deloader(void);
+material_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_type_asset_count(const void *src);
+material_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-texture_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+material_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_asset_type(void);
+material_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }

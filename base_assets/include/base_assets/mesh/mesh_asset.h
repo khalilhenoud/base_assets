@@ -1,15 +1,15 @@
 /**
- * @file texture_asset.h
+ * @file mesh_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2023-09-04
+ * @date 2026-04-22
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2026
  *
  */
-#ifndef TEXTURE_ASSET_H
-#define TEXTURE_ASSET_H
+#ifndef MESH_ASSET_H
+#define MESH_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +22,7 @@ extern "C" {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_asset_t, '*' = texture_asset
+//| mesh_asset_t, '*' = mesh_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -53,88 +53,76 @@ typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
 typedef
-enum texture_format_t {
-  TEXTURE_FORMAT_RGBA,
-  TEXTURE_FORMAT_BGRA,
-  TEXTURE_FORMAT_RGB,
-  TEXTURE_FORMAT_BGR,
-  TEXTURE_FORMAT_LA,             // luminance/alpha
-  TEXTURE_FORMAT_L,
-  TEXTURE_FORMAT_A,
-  TEXTURE_FORMAT_COUNT
-} texture_format_t;
-
-// TODO: replace with the content of texture_runtime_t
-typedef
-struct texture_asset_t {
-  uint32_t width;
-  uint32_t height;
-  texture_format_t format;
-  cvector_t buffer;
-} texture_asset_t;
+struct mesh_asset_t {
+  cvector_t vertices;           // float
+  cvector_t normals;            // float
+  cvector_t uvs;                // float
+  cvector_t indices;            // uint32_t
+  cvector_t materials;          // asset_ref_t
+} mesh_asset_t;
 
 BASE_ASSETS_API
 void
-texture_asset_def(void *ptr);
+mesh_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_def(const void *ptr);
+mesh_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_serialize(
+mesh_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-texture_asset_deserialize(
+mesh_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-texture_asset_type_size(void);
+mesh_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_owns_alloc(void);
+mesh_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-texture_asset_get_alloc(const void *ptr);
+mesh_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_cleanup(
+mesh_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-texture_asset_get_dir(void);
+mesh_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-texture_asset_get_loader(void);
+mesh_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-texture_asset_get_deloader(void);
+mesh_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_type_asset_count(const void *src);
+mesh_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-texture_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+mesh_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_asset_type(void);
+mesh_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }

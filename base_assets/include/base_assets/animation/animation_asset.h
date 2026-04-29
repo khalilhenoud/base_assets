@@ -1,15 +1,15 @@
 /**
- * @file texture_asset.h
+ * @file animation_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2023-09-04
+ * @date 2026-04-26
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2026
  *
  */
-#ifndef TEXTURE_ASSET_H
-#define TEXTURE_ASSET_H
+#ifndef ANIMATION_ASSET_H
+#define ANIMATION_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,10 +19,13 @@ extern "C" {
 #include <base_assets/internal/module.h>
 #include <library/asset/types.h>
 #include <library/containers/cvector.h>
+#include <library/string/cstring.h>
+#include <math/quatf.h>
+#include <math/vector3f.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_asset_t, '*' = texture_asset
+//| animation_asset_t, '*' = animation_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -53,88 +56,101 @@ typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
 typedef
-enum texture_format_t {
-  TEXTURE_FORMAT_RGBA,
-  TEXTURE_FORMAT_BGRA,
-  TEXTURE_FORMAT_RGB,
-  TEXTURE_FORMAT_BGR,
-  TEXTURE_FORMAT_LA,             // luminance/alpha
-  TEXTURE_FORMAT_L,
-  TEXTURE_FORMAT_A,
-  TEXTURE_FORMAT_COUNT
-} texture_format_t;
+struct position_key_t {
+  float time;
+  vector3f value;
+} position_key_t;
 
-// TODO: replace with the content of texture_runtime_t
 typedef
-struct texture_asset_t {
-  uint32_t width;
-  uint32_t height;
-  texture_format_t format;
-  cvector_t buffer;
-} texture_asset_t;
+struct rotation_key_t {
+  float time;
+  quatf value;
+} rotation_key_t;
+
+typedef
+struct scale_key_t {
+  float time;
+  vector3f value;
+} scale_key_t;
+
+typedef
+struct animation_asset_node_t {
+  cstring_t name;
+  cvector_t position_keys;
+  cvector_t rotation_keys;
+  cvector_t scale_keys;
+} animation_asset_node_t;
+
+typedef
+struct animation_asset_t {
+  cstring_t name;
+  float duration;                     // in ticks
+  float ticks_per_second;
+  cvector_t channels;                 // animation_asset_node_t
+} animation_asset_t;
 
 BASE_ASSETS_API
 void
-texture_asset_def(void *ptr);
+animation_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_def(const void *ptr);
+animation_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_serialize(
+animation_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-texture_asset_deserialize(
+animation_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-texture_asset_type_size(void);
+animation_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_owns_alloc(void);
+animation_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-texture_asset_get_alloc(const void *ptr);
+animation_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_cleanup(
+animation_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-texture_asset_get_dir(void);
+animation_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-texture_asset_get_loader(void);
+animation_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-texture_asset_get_deloader(void);
+animation_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_type_asset_count(const void *src);
+animation_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-texture_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+animation_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_asset_type(void);
+animation_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }

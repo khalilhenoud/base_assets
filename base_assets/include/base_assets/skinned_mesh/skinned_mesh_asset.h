@@ -1,15 +1,15 @@
 /**
- * @file texture_asset.h
+ * @file skinned_mesh_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2023-09-04
+ * @date 2026-04-22
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2026
  *
  */
-#ifndef TEXTURE_ASSET_H
-#define TEXTURE_ASSET_H
+#ifndef SKINNED_MESH_ASSET_H
+#define SKINNED_MESH_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,12 +17,15 @@ extern "C" {
 
 #include <stdint.h>
 #include <base_assets/internal/module.h>
+#include <base_assets/mesh/mesh_asset.h>
 #include <library/asset/types.h>
 #include <library/containers/cvector.h>
+#include <library/string/cstring.h>
+#include <math/matrix4f.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| texture_asset_t, '*' = texture_asset
+//| skinned_asset_t, '*' = skinned_mesh_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -53,88 +56,103 @@ typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
 typedef
-enum texture_format_t {
-  TEXTURE_FORMAT_RGBA,
-  TEXTURE_FORMAT_BGRA,
-  TEXTURE_FORMAT_RGB,
-  TEXTURE_FORMAT_BGR,
-  TEXTURE_FORMAT_LA,             // luminance/alpha
-  TEXTURE_FORMAT_L,
-  TEXTURE_FORMAT_A,
-  TEXTURE_FORMAT_COUNT
-} texture_format_t;
+struct skeleton_node_t {
+  cstring_t name;               // corresponds to a bone, unless it is a helper
+  matrix4f transform;
+  cvector_t children;           // uint32_t, index into skeleton_t
+  uint32_t bone_index;          // uint32_t max means it is invalid
+} skeleton_node_t;
 
-// TODO: replace with the content of texture_runtime_t
+// NOTE: for simplicity, I am currently not treating this as a separate type
 typedef
-struct texture_asset_t {
-  uint32_t width;
-  uint32_t height;
-  texture_format_t format;
-  cvector_t buffer;
-} texture_asset_t;
+struct skeleton_asset_t {
+  cvector_t nodes;              // skeleton_node_t
+} skeleton_asset_t;
+
+typedef
+struct skeleton_bone_t {
+  cstring_t name;
+  matrix4f offset_matrix;       // mesh to bone local space
+} skeleton_bone_t;
+
+// TODO: compress these!
+typedef
+struct bone_id_weight_t {
+  uint32_t id[8];
+  float weight[8];
+} bone_id_weight_t;
+
+// NOTE: for simplicity, I am not treating mesh as a detached asset file
+typedef
+struct skinned_mesh_asset_t {
+  mesh_asset_t mesh;
+  cvector_t bones;
+  skeleton_asset_t skeleton;
+  cvector_t vertex_to_bones;         // cvector_t of bone_id_weight_t
+} skinned_mesh_asset_t;
 
 BASE_ASSETS_API
 void
-texture_asset_def(void *ptr);
+skinned_mesh_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_def(const void *ptr);
+skinned_mesh_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_serialize(
+skinned_mesh_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-texture_asset_deserialize(
+skinned_mesh_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-texture_asset_type_size(void);
+skinned_mesh_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_owns_alloc(void);
+skinned_mesh_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-texture_asset_get_alloc(const void *ptr);
+skinned_mesh_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-texture_asset_cleanup(
+skinned_mesh_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-texture_asset_get_dir(void);
+skinned_mesh_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-texture_asset_get_loader(void);
+skinned_mesh_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-texture_asset_get_deloader(void);
+skinned_mesh_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_type_asset_count(const void *src);
+skinned_mesh_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-texture_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+skinned_mesh_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-texture_asset_is_asset_type(void);
+skinned_mesh_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }
