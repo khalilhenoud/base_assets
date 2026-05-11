@@ -1,15 +1,15 @@
 /**
- * @file font_asset.h
+ * @file bvh_asset.h
  * @author khalilhenoud@gmail.com
  * @brief
  * @version 0.1
- * @date 2026-04-26
+ * @date 2026-04-29
  *
  * @copyright Copyright (c) 2026
  *
  */
-#ifndef FONT_ASSET_H
-#define FONT_ASSET_H
+#ifndef BVH_ASSET_H
+#define BVH_ASSET_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,14 +17,13 @@ extern "C" {
 
 #include <stdint.h>
 #include <base_assets/internal/module.h>
-#include <base_assets/texture/texture_asset.h>
 #include <library/asset/types.h>
-
-#define FONT_ASSET_MAX_GLYPH_COUNT 256
+#include <library/containers/cvector.h>
+#include <math/vector3f.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| font_asset_t, '*' = font_asset
+//| bvh_asset_t, '*' = bvh_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -53,116 +52,95 @@ extern "C" {
 
 typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
-typedef float glyph_bounds_t[6];
 
 typedef
-struct glyph_data_t {
-  uint32_t x, y;
-  uint32_t width;
-  uint32_t width_offset;
-} glyph_data_t;
+struct bvh_aabb_t {
+  point3f min_max[2];
+} bvh_aabb_t;
 
-// NOTE: we are embedding the texture asset for simplicity.
+// NOTE: left_first meaning depends on the tri_count. If tri_count is 0, the
+// node is an interior node and left_first will be an offset into the node
+// array, otherwise we are dealing with a leaf and left_first will be an offset
+// into the triangle array.
 typedef
-struct font_asset_t {
-  texture_asset_t texture;
-  uint32_t texture_width, texture_height;
-  uint32_t cell_width, cell_height;
-  uint32_t font_width, font_height;
-  uint32_t start_char;
+struct bvh_node_t {
+  bvh_aabb_t bounds;
+  uint32_t left_first, tri_count;
+} bvh_node_t;
 
-  glyph_data_t glyphs[FONT_ASSET_MAX_GLYPH_COUNT];
-  glyph_bounds_t bounds[FONT_ASSET_MAX_GLYPH_COUNT];
-} font_asset_t;
+// NOTE: the max size of node array is max: 2 * (count + 1) - 1.
+// We also allocate an extra unused node that is left unused so we can adhere to
+// cache alignment in the future.
+typedef
+struct bvh_asset_t {
+  cvector_t faces;          // face_t
+  cvector_t normals;        // vector3f
+  cvector_t bounds;         // bhv_aabb_t
+  cvector_t nodes;          // bvh_node_t
+} bvh_asset_t;
 
 BASE_ASSETS_API
 void
-font_asset_def(void *ptr);
+bvh_asset_def(void *ptr);
 
 BASE_ASSETS_API
 uint32_t
-font_asset_is_def(const void *ptr);
+bvh_asset_is_def(const void *ptr);
 
 BASE_ASSETS_API
 void
-font_asset_serialize(
+bvh_asset_serialize(
   const void *src,
   binary_stream_t *stream);
 
 BASE_ASSETS_API
 void
-font_asset_deserialize(
+bvh_asset_deserialize(
   void *dst,
   const allocator_t *allocator,
   binary_stream_t* stream);
 
 BASE_ASSETS_API
 size_t
-font_asset_type_size(void);
+bvh_asset_type_size(void);
 
 BASE_ASSETS_API
 uint32_t
-font_asset_owns_alloc(void);
+bvh_asset_owns_alloc(void);
 
 BASE_ASSETS_API
 const allocator_t *
-font_asset_get_alloc(const void *ptr);
+bvh_asset_get_alloc(const void *ptr);
 
 BASE_ASSETS_API
 void
-font_asset_cleanup(
+bvh_asset_cleanup(
   void *ptr,
   const allocator_t *allocator);
 
 BASE_ASSETS_API
 const char *
-font_asset_get_dir(void);
+bvh_asset_get_dir(void);
 
 BASE_ASSETS_API
 loader_t
-font_asset_get_loader(void);
+bvh_asset_get_loader(void);
 
 BASE_ASSETS_API
 deloader_t
-font_asset_get_deloader(void);
+bvh_asset_get_deloader(void);
 
 BASE_ASSETS_API
 uint32_t
-font_asset_type_asset_count(const void *src);
+bvh_asset_type_asset_count(const void *src);
 
 BASE_ASSETS_API
 void
-font_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
+bvh_asset_type_get_assets(const void *src, const asset_ref_t *refs[]);
 
 BASE_ASSETS_API
 uint32_t
-font_asset_is_asset_type(void);
-
-////////////////////////////////////////////////////////////////////////////////
-BASE_ASSETS_API
-uint32_t
-font_asset_glyph_count(const font_asset_t *font);
-
-BASE_ASSETS_API
-uint32_t
-font_asset_column_count(const font_asset_t *font);
-
-BASE_ASSETS_API
-uint32_t
-font_asset_row_count(const font_asset_t *font);
-
-BASE_ASSETS_API
-void
-query_font_asset_glyph_bounds(
-  const font_asset_t *font,
-  const char c,
-  glyph_bounds_t *out);
-
-BASE_ASSETS_API
-uint32_t
-font_asset_has_glyph(
-  const font_asset_t *font,
-  const char c);
+bvh_asset_is_asset_type(void);
 
 #ifdef __cplusplus
 }

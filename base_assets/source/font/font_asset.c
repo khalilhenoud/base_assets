@@ -220,6 +220,51 @@ font_asset_is_asset_type(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+uint32_t
+font_asset_glyph_count(const font_asset_t *font)
+{
+  return
+    (font->texture_width / font->cell_width) *
+    (font->texture_height / font->cell_height);
+}
+
+uint32_t
+font_asset_column_count(const font_asset_t *font)
+{
+  return font->texture_width / font->cell_width;
+}
+
+uint32_t
+font_asset_row_count(const font_asset_t *font)
+{
+  return font->texture_height / font->cell_height;
+}
+
+void
+query_font_asset_glyph_bounds(
+  const font_asset_t *font,
+  const char c,
+  glyph_bounds_t *out)
+{
+  assert(font != NULL);
+
+  {
+    char glyph = font_asset_has_glyph(font, c) ? c : '$';
+    memcpy(out, font->bounds + glyph, sizeof(glyph_bounds_t));
+  }
+}
+
+uint32_t
+font_asset_has_glyph(
+  const font_asset_t *font,
+  const char c)
+{
+ uint32_t total = font_asset_glyph_count(font);
+ uint32_t cui = (uint32_t)c;
+ return cui >= font->start_char && cui < (font->start_char + total);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 INITIALIZER(register_font_asset_t)
 {
   vtable_t vtable;
