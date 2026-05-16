@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(entity_package)
+project(acsu_package)
 
 if (NOT HAS_STANDALONE_PREDECESSOR)
   # used to omit test projects from dependencies.
@@ -39,4 +39,4 @@ if (NOT HAS_STANDALONE_PREDECESSOR)
   add_subdirectory(external/library library)
 endif()
 
-add_subdirectory(base_assets)
+add_subdirectory(acsu)
