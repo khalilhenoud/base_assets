@@ -4,3 +4,6 @@
 [submodule "external/math"]
 	path = external/math
 	url = https://github.com/khalilhenoud/math.git
+[submodule "external/spatial"]
+	path = external/spatial
+	url = https://github.com/khalilhenoud/spatial.git
