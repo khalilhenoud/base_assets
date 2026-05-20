@@ -12,7 +12,6 @@
 #include <string.h>
 #include <acsu/font/font_asset.h>
 #include <library/allocator/allocator.h>
-#include <library/asset/asset_ref.h>
 #include <library/core/core.h>
 #include <library/type_registry/type_registry.h>
 
@@ -50,7 +49,7 @@ font_asset_serialize(
 
   {
     const font_asset_t *font = (const font_asset_t *)src;
-    texture_asset_serialize(&font->texture, stream);
+    asset_ref_serialize(&font->texture_ref, stream);
     binary_stream_write(stream, &font->texture_width, sizeof(uint32_t));
     binary_stream_write(stream, &font->texture_height, sizeof(uint32_t));
     binary_stream_write(stream, &font->cell_width, sizeof(uint32_t));
@@ -61,11 +60,11 @@ font_asset_serialize(
     binary_stream_write(
       stream,
       font->glyphs,
-      sizeof(glyph_data_t) * FONT_ASSET_MAX_GLYPH_COUNT);
+      sizeof(glyph_data_t) * FONT_GLYPH_COUNT);
     binary_stream_write(
       stream,
       font->bounds,
-      sizeof(glyph_bounds_t) * FONT_ASSET_MAX_GLYPH_COUNT);
+      sizeof(glyph_bounds_t) * FONT_GLYPH_COUNT);
   }
 }
 
@@ -79,10 +78,10 @@ font_asset_deserialize(
 
   {
     size_t s_32 = sizeof(uint32_t);
-    size_t s_gd = sizeof(glyph_data_t) * FONT_ASSET_MAX_GLYPH_COUNT;
-    size_t s_gb = sizeof(glyph_bounds_t) * FONT_ASSET_MAX_GLYPH_COUNT;
+    size_t s_gd = sizeof(glyph_data_t) * FONT_GLYPH_COUNT;
+    size_t s_gb = sizeof(glyph_bounds_t) * FONT_GLYPH_COUNT;
     font_asset_t *font = (font_asset_t *)dst;
-    texture_asset_deserialize(&font->texture, allocator, stream);
+    asset_ref_deserialize(&font->texture_ref, allocator, stream);
     binary_stream_read(stream, (uint8_t *)&font->texture_width, s_32, s_32);
     binary_stream_read(stream, (uint8_t *)&font->texture_height, s_32, s_32);
     binary_stream_read(stream, (uint8_t *)&font->cell_width, s_32, s_32);
@@ -123,7 +122,7 @@ font_asset_cleanup(
 
   {
     font_asset_t *font = (font_asset_t *)ptr;
-    texture_asset_cleanup(&font->texture, allocator);
+    asset_ref_cleanup(&font->texture_ref, allocator);
     font_asset_def(font);
   }
 }
@@ -193,13 +192,7 @@ uint32_t
 font_asset_type_asset_count(const void *src)
 {
   assert(src);
-
-  {
-    const font_asset_t *font = src;
-    return texture_asset_type_asset_count(&font->texture);
-  }
-
-  return 0;
+  return 1;
 }
 
 void
@@ -209,7 +202,7 @@ font_asset_type_get_assets(const void *src, const asset_ref_t *refs[])
 
   {
     const font_asset_t *font = src;
-    texture_asset_type_get_assets(&font->texture, refs);
+    refs[0] = &font->texture_ref;
   }
 }
 

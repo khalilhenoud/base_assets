@@ -55,12 +55,12 @@ typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
 typedef
-struct texture_asset_properties_t {
+struct texture_properties_t {
   asset_ref_t texture_ref;
   float u, v;
   float u_scale, v_scale;
   float angle;
-} texture_asset_properties_t;
+} texture_properties_t;
 
 typedef
 struct mat_rgba_t {

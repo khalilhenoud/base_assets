@@ -11,7 +11,6 @@ add_library(${PROJECT_NAME} SHARED
         ./source/material/material_asset.c
         ./source/mesh/mesh_asset.c
         ./source/skinned_mesh/skinned_mesh_asset.c
-        ./source/spatial/bvh_asset.c
         ./source/texture/texture_asset.c
         )
 

@@ -50,7 +50,7 @@ animation_asset_node_serialize(
   assert(src && stream);
 
   {
-    const animation_asset_node_t *node = (const animation_asset_node_t *)src;
+    const animation_node_t *node = (const animation_node_t *)src;
     cstring_serialize(&node->name, stream);
     cvector_serialize(&node->position_keys, stream);
     cvector_serialize(&node->rotation_keys, stream);
@@ -85,7 +85,7 @@ animation_asset_node_deserialize(
   assert(dst && allocator && stream);
 
   {
-    animation_asset_node_t *node = (animation_asset_node_t *)dst;
+    animation_node_t *node = (animation_node_t *)dst;
     cstring_def(&node->name);
     cstring_deserialize(&node->name, allocator, stream);
     cvector_deserialize(&node->position_keys, allocator, stream);
@@ -147,12 +147,12 @@ animation_asset_node_cleanup(
   assert(ptr && allocator);
 
   {
-    animation_asset_node_t *node = (animation_asset_node_t *)ptr;
+    animation_node_t *node = (animation_node_t *)ptr;
     cstring_cleanup2(&node->name);
     cvector_cleanup2(&node->position_keys);
     cvector_cleanup2(&node->rotation_keys);
     cvector_cleanup2(&node->scale_keys);
-    memset(node, 0, sizeof(animation_asset_node_t));
+    memset(node, 0, sizeof(animation_node_t));
   }
 }
 

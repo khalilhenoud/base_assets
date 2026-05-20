@@ -25,7 +25,7 @@ extern "C" {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//| skinned_asset_t, '*' = skinned_mesh_asset
+//| skinned_mesh_asset_t, '*' = skinned_mesh_asset
 //|=============================================================================
 //| OPERATION                   | SUPPORTED
 //|=============================================================================
@@ -55,6 +55,9 @@ extern "C" {
 typedef struct allocator_t allocator_t;
 typedef struct binary_stream_t binary_stream_t;
 
+// TODO: This has the most work to be done right now, between separating the
+// skeleton and figuring the final structure, there is much work to be done.
+
 typedef
 struct skeleton_node_t {
   cstring_t name;               // corresponds to a bone, unless it is a helper
@@ -82,11 +85,12 @@ struct bone_id_weight_t {
   float weight[8];
 } bone_id_weight_t;
 
-// NOTE: for simplicity, I am not treating mesh as a detached asset file
+// NOTE: for simplicity, I am not treating mesh as a detached asset file. Though
+// it is not clear if that is the right thing to do.
 typedef
 struct skinned_mesh_asset_t {
   mesh_asset_t mesh;
-  cvector_t bones;
+  cvector_t bones;                   // skeleton_bone_t
   skeleton_asset_t skeleton;
   cvector_t vertex_to_bones;         // cvector_t of bone_id_weight_t
 } skinned_mesh_asset_t;

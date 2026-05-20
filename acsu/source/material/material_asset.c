@@ -49,8 +49,7 @@ texture_asset_properties_serialize(
   assert(src && stream);
 
   {
-    const texture_asset_properties_t *tex_prop =
-      (const texture_asset_properties_t *)src;
+    const texture_properties_t *tex_prop = (const texture_properties_t *)src;
     asset_ref_serialize(&tex_prop->texture_ref, stream);
     binary_stream_write(stream, &tex_prop->angle, sizeof(float));
     binary_stream_write(stream, &tex_prop->u, sizeof(float));
@@ -91,7 +90,7 @@ texture_asset_properties_deserialize(
 
   {
     size_t s_f = sizeof(float);
-    texture_asset_properties_t *tex_prop = (texture_asset_properties_t *)dst;
+    texture_properties_t *tex_prop = (texture_properties_t *)dst;
     asset_ref_deserialize(&tex_prop->texture_ref, allocator, stream);
     binary_stream_read(stream, (uint8_t *)&tex_prop->angle, s_f, s_f);
     binary_stream_read(stream, (uint8_t *)&tex_prop->u, s_f, s_f);
@@ -153,7 +152,7 @@ texture_asset_properties_cleanup(
   assert(ptr && allocator);
 
   {
-    texture_asset_properties_t *tex_prop = (texture_asset_properties_t *)ptr;
+    texture_properties_t *tex_prop = (texture_properties_t *)ptr;
     asset_ref_cleanup(&tex_prop->texture_ref, allocator);
   }
 }
@@ -259,8 +258,8 @@ material_asset_type_get_assets(const void *src, const asset_ref_t *refs[])
   {
     const material_asset_t *material = src;
     for (uint32_t i = 0; i < material->textures.size; ++i) {
-      const texture_asset_properties_t *tex_prop = cvector_as_c(
-        &material->textures, i, texture_asset_properties_t);
+      const texture_properties_t *tex_prop = cvector_as_c(
+        &material->textures, i, texture_properties_t);
       refs[i] = &tex_prop->texture_ref;
     }
   }

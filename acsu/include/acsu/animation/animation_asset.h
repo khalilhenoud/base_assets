@@ -74,19 +74,19 @@ struct scale_key_t {
 } scale_key_t;
 
 typedef
-struct animation_asset_node_t {
+struct animation_node_t {
   cstring_t name;
   cvector_t position_keys;
   cvector_t rotation_keys;
   cvector_t scale_keys;
-} animation_asset_node_t;
+} animation_node_t;
 
 typedef
 struct animation_asset_t {
   cstring_t name;
   float duration;                     // in ticks
   float ticks_per_second;
-  cvector_t channels;                 // animation_asset_node_t
+  cvector_t channels;                 // animation_node_t
 } animation_asset_t;
 
 ACSU_API

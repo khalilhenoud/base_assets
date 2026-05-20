@@ -17,10 +17,10 @@ extern "C" {
 
 #include <stdint.h>
 #include <acsu/internal/module.h>
-#include <acsu/texture/texture_asset.h>
+#include <library/asset/asset_ref.h>
 #include <library/asset/types.h>
 
-#define FONT_ASSET_MAX_GLYPH_COUNT 256
+#define FONT_GLYPH_COUNT 256
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,17 +62,16 @@ struct glyph_data_t {
   uint32_t width_offset;
 } glyph_data_t;
 
-// NOTE: we are embedding the texture asset for simplicity.
 typedef
 struct font_asset_t {
-  texture_asset_t texture;
+  asset_ref_t texture_ref;
   uint32_t texture_width, texture_height;
   uint32_t cell_width, cell_height;
   uint32_t font_width, font_height;
   uint32_t start_char;
 
-  glyph_data_t glyphs[FONT_ASSET_MAX_GLYPH_COUNT];
-  glyph_bounds_t bounds[FONT_ASSET_MAX_GLYPH_COUNT];
+  glyph_data_t glyphs[FONT_GLYPH_COUNT];
+  glyph_bounds_t bounds[FONT_GLYPH_COUNT];
 } font_asset_t;
 
 ACSU_API

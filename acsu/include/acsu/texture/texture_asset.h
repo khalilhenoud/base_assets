@@ -64,7 +64,6 @@ enum texture_format_t {
   TEXTURE_FORMAT_COUNT
 } texture_format_t;
 
-// TODO: replace with the content of texture_runtime_t
 typedef
 struct texture_asset_t {
   uint32_t width;
